@@ -110,7 +110,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
     const video = await Video.findById(Id)
     video.views += 1
-    video.save({validateBeforeSave:false})
+    await video.save({validateBeforeSave:false})
 
     return res.status(200).json(new ApiResponse(200,video,"video fetched successfully"))
 })
@@ -120,18 +120,65 @@ const getVideoByOwner = asyncHandler(async(req,res)=>{
     return res.status(200).json(new ApiResponse(200,videos,"videos by owner fetched successfully"))
 })
 const updateVideo = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
-    //TODO: update video details like title, description, thumbnail
+  const { videoId } = req.params;
+  const { title, description } = req.body;
 
-})
+  if (!title && !description && !req.file) {
+    throw new ApiError(400, "Nothing to update");
+  }
+
+  const updateData = {};
+
+  if (title) updateData.title = title;
+  if (description) updateData.description = description;
+
+  if (req.file?.path) {
+    const thumbnail = await uploadOnCloudinary(req.file.path);
+    updateData.thumbnail = thumbnail.url;
+  }
+
+  const updatedVideo = await Video.findByIdAndUpdate(
+    videoId,
+    { $set: updateData },
+    { new: true }
+  );
+
+  if (!updatedVideo) {
+    throw new ApiError(404, "Video not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, updatedVideo, "video updated successfully")
+  );
+});
+
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: delete video
+    
+    const deletedVideo = await Video.findOneAndDelete({_id:videoId})
+
+    if (!deletedVideo) {
+    throw new ApiError(404, "Video not found or unauthorized");
+        }
+
+    return res.status(200).json(new ApiResponse(200,deletedVideo,"video deleted successfully"))
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+
+    const video = await Video.findOne({_id:videoId})
+    if(!video){
+        throw new ApiError(400,"video not fetched for toggle")
+    }
+
+    video.isPublished = !video.isPublished
+    await video.save({validateBeforeSave:false})
+
+    return res.status(200).json(200,{},"video toggled successfully")
+
+
 })
 
 export {

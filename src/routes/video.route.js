@@ -2,7 +2,10 @@ import {Router} from "express"
 import { getAllVideos,
          publishAVideo,
          getVideoById,
-         getVideoByOwner
+         getVideoByOwner,
+         updateVideo,
+         deleteVideo,
+         togglePublishStatus
         
         } from "../controller/video.controller.js"
 
@@ -27,4 +30,7 @@ router.route("/publishAVideo").post(verifyJWT,
     )
 
 router.route("/getVideoById/:Id").get(getVideoById)
-router.route("/getVideoByOwner").get(getVideoByOwner)
+router.route("/getVideoByOwner").get(verifyJWT,getVideoByOwner)
+router.route("/updateVideo/:videoId").patch(upload.single("thumbnail"),updateVideo)
+router.route("/deleteVideo/:videoId").get(deleteVideo)
+router.route("/togglePublishStatus/:videoId").get(togglePublishStatus)
