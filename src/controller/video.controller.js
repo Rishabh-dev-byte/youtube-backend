@@ -106,11 +106,19 @@ const publishAVideo = asyncHandler(async (req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    const { Id } = req.params
 
-    
+    const video = await Video.findById(Id)
+    video.views += 1
+    video.save({validateBeforeSave:false})
+
+    return res.status(200).json(new ApiResponse(200,video,"video fetched successfully"))
 })
+const getVideoByOwner = asyncHandler(async(req,res)=>{
 
+    const videos = await Video.find({owner:req.user._id})
+    return res.status(200).json(new ApiResponse(200,videos,"videos by owner fetched successfully"))
+})
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: update video details like title, description, thumbnail
@@ -132,5 +140,6 @@ export {
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    getVideoByOwner
 }
