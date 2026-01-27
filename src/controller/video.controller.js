@@ -108,6 +108,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
     const { Id } = req.params
 
+    if (!mongoose.Types.ObjectId.isValid(Id)) {
+    throw new ApiError(400, "Invalid ID format");
+     }
+
     const video = await Video.findById(Id)
     video.views += 1
     await video.save({validateBeforeSave:false})
@@ -125,6 +129,10 @@ const getVideoByOwner = asyncHandler(async(req,res)=>{
 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+
+   if (!mongoose.Types.ObjectId.isValid(videoId)) {
+   throw new ApiError(400, "Invalid ID format");
+     }
   const { title, description } = req.body;
 
   if (!title && !description && !req.file) {
@@ -159,6 +167,10 @@ const updateVideo = asyncHandler(async (req, res) => {
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(videoId)) {
+    throw new ApiError(400, "Invalid ID format");
+     }
     
     const deletedVideo = await Video.findOneAndDelete({_id:videoId})
 
@@ -172,8 +184,13 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+    
+    if (!mongoose.Types.ObjectId.isValid(videoId)) {
+    throw new ApiError(400, "Invalid ID format");
+     }
 
     const video = await Video.findOne({_id:videoId})
+    
     if(!video){
         throw new ApiError(400,"video not fetched for toggle")
     }
@@ -189,6 +206,10 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 const addToWatchHistory = asyncHandler(async(req,res)=>{
     const {id} = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid ID format");
+}
     const user = await User.findByIdAndUpdate(
         req.user_id,
         {  
@@ -208,6 +229,10 @@ const addToWatchHistory = asyncHandler(async(req,res)=>{
 
 const RemoveFromWatchHistory = asyncHandler(async(req,res)=>{
     const {id} = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid ID format");
+}
     const user = await User.findByIdAndUpdate(
         req.user_id,
         {  
@@ -232,5 +257,5 @@ export {
     togglePublishStatus,
     getVideoByOwner,
     addToWatchHistory,
-   RemoveFromWatchHistory
+    RemoveFromWatchHistory
 }
