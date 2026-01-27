@@ -114,11 +114,15 @@ const getVideoById = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200,video,"video fetched successfully"))
 })
+
+
 const getVideoByOwner = asyncHandler(async(req,res)=>{
 
     const videos = await Video.find({owner:req.user._id})
     return res.status(200).json(new ApiResponse(200,videos,"videos by owner fetched successfully"))
 })
+
+
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { title, description } = req.body;
@@ -165,6 +169,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200,deletedVideo,"video deleted successfully"))
 })
 
+
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
 
@@ -181,6 +186,43 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 })
 
+
+const addToWatchHistory = asyncHandler(async(req,res)=>{
+    const {id} = req.params
+    const user = await User.findByIdAndUpdate(
+        req.user_id,
+        {  
+         $addToSet:{watchHistory:id}   
+        },
+        {new:true}
+
+    )
+
+     if (!user){
+        throw new ApiError(404,"user for adding to watch history not found")
+     }
+
+    return res.status(200).json(new ApiResponse(200,{},"added to watch history successfully"))
+})
+
+
+const RemoveFromWatchHistory = asyncHandler(async(req,res)=>{
+    const {id} = req.params
+    const user = await User.findByIdAndUpdate(
+        req.user_id,
+        {  
+         $pull:{watchHistory:id}   
+        },
+        {new:true}
+    )
+
+     if (!user){
+        throw new ApiError(404,"user for removing from watch history not found")
+    }
+
+    return res.status(200).json(new ApiResponse(200,{},"removed from watch history successfully"))
+})
+
 export {
     getAllVideos,
     publishAVideo,
@@ -188,5 +230,7 @@ export {
     updateVideo,
     deleteVideo,
     togglePublishStatus,
-    getVideoByOwner
+    getVideoByOwner,
+    addToWatchHistory,
+   RemoveFromWatchHistory
 }

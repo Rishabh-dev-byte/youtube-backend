@@ -5,7 +5,10 @@ import { getAllVideos,
          getVideoByOwner,
          updateVideo,
          deleteVideo,
-         togglePublishStatus
+         togglePublishStatus,
+         addToWatchHistory,
+         RemoveFromWatchHistory
+
         
         } from "../controller/video.controller.js"
 
@@ -22,7 +25,7 @@ router.route("/publishAVideo").post(verifyJWT,
             maxCount: 1
         }, 
         {
-            name: " thumbnail",
+            name: "thumbnail",
             maxCount: 1
         }
     ]),
@@ -34,3 +37,5 @@ router.route("/getVideoByOwner").get(verifyJWT,getVideoByOwner)
 router.route("/updateVideo/:videoId").patch(upload.single("thumbnail"),updateVideo)
 router.route("/deleteVideo/:videoId").get(deleteVideo)
 router.route("/togglePublishStatus/:videoId").get(togglePublishStatus)
+router.route("/addToWatchHistory/:Id").get(verifyJWT,addToWatchHistory)
+router.route("/RemoveFromWatchHistory/:Id").get(verifyJWT,RemoveFromWatchHistory)
