@@ -39,3 +39,5 @@ router.route("/deleteVideo/:videoId").get(deleteVideo)
 router.route("/togglePublishStatus/:videoId").get(togglePublishStatus)
 router.route("/addToWatchHistory/:Id").get(verifyJWT,addToWatchHistory)
 router.route("/RemoveFromWatchHistory/:Id").get(verifyJWT,RemoveFromWatchHistory)
+
+export default router
