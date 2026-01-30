@@ -55,20 +55,27 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
         {
           $facet: {
-          channels: [{ $replaceRoot: { newRoot: "$channel" } }],
+          subscribers: [{ $replaceRoot: { newRoot: "$subscriber" } }],
           totalCount: [{ $count: "count" }]
         }
-        }
+        },
+
   
     ])
+
+    const response = {
+            data: subscribers[0].subscribers,
+            totalCount: subscribers[0].totalCount[0]?.count || 0
+                       }
+
     res.status(200).json(
-        new ApiResponse(200,subscribers[0].subscribers,"subscribers fetched successfully")
+        new ApiResponse(200,response,"subscribers fetched successfully")
     )
 })
 
 
 const getSubscribedChannels = asyncHandler(async (req, res) => {
-     const subscribers = await Subscription.aggregate([
+     const channels = await Subscription.aggregate([
         {
             $match:{
                  subscriber: new mongoose.Types.ObjectId(req.user._id)
@@ -96,14 +103,20 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 
         {
           $facet: {
-          subscribers: [{ $replaceRoot: { newRoot: "$channel" } }],
+          channels: [{ $replaceRoot: { newRoot: "$channel" } }],
            totalCount: [{ $count: "count" }]
         }
         }
   
     ])
+
+    const response = {
+        data: channels[0].channels,
+        totalCount: channels[0].totalCount[0]?.count || 0
+          }
+
     res.status(200).json(
-        new ApiResponse(200,subscribers[0].subscribers,"channels  fetched successfully")
+        new ApiResponse(200,response,"channels  fetched successfully")
     )
 })
 

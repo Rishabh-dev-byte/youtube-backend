@@ -29,7 +29,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
                         $project:{
                             fullName:1,
                             username:1,
-                            avatar:1
+                            avatar:1,
+                            _id:1
                         }
                     }
                 ]
@@ -54,7 +55,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     });
 
     return res.status(200).json(
-        new ApiResponse(200,allVideos,"all videos fetched successfully")
+        new ApiResponse(200, allVideos ,"all videos fetched successfully")
     )
 
 
