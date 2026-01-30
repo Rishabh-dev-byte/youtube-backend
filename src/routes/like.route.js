@@ -8,6 +8,6 @@ import {
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 
 const router = Router();
-
+router.route("/toggleVideoLike/:videoId").get(verifyJWT,toggleVideoLike)
 
 export default router

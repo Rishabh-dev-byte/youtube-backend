@@ -21,12 +21,14 @@ import videoRouter from "./routes/video.route.js"
 import subscriptionRoute from "./routes/subscription.route.js"
 import playlistRoute from "./routes/playlist.route.js"
 import tweetRoute from "./routes/tweet.route.js"
+import likeRoute from "./routes/like.route.js"
 
 app.use("api/v1/users",userRouter)
 app.use("api/v1/videos",videoRouter)
 app.use("api/v1/subscription",subscriptionRoute)
 app.use("api/v1/playlist",playlistRoute)
 app.use("api/v1/tweet",tweetRoute)
+app.use("api/v1/like",likeRoute)
 
 
 export default app
