@@ -110,7 +110,21 @@ const updateTweet = asyncHandler(async (req, res) => {
 
 const deleteTweet = asyncHandler(async (req, res) => {
      const {id} = req.params
+
+     if (!mongoose.Types.ObjectId.isValid(id)) {
+          throw new ApiError(400, "Invalid ID format");
+        }
+
+     const deletedTweet = await Tweet.findByIdAndDelete(id)
      
+      if(!deletedTweet){
+        throw new ApiError(404, "Tweet not deleted");
+    }
+    
+     return res.status(200).json(
+    new ApiResponse(200, {} , "tweet deleted successfully")
+    )
+    
 })
 
 export {

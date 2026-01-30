@@ -13,6 +13,7 @@ router.route("/createTweet").post(verifyJWT,createTweet)
 router.route("/getOwnerTweets").post(verifyJWT,getOwnerTweets)
 router.route("/getAllTweets").get(verifyJWT,getAllTweets)
 router.route("/updateTweet/:id").get(verifyJWT,updateTweet)
+router.route("/deleteTweet/:id").get(verifyJWT,deleteTweet)
 
 
 export default router
