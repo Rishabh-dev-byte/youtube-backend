@@ -7,6 +7,10 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
     const {videoId} = req.params
+
+     if (!mongoose.Types.ObjectId.isValid(videoId)) {
+     throw new ApiError(400, "Invalid ID format");
+         }
     const {page = 1, limit = 10} = req.query
 
      const videoComment =  Comment.aggregate([
@@ -56,20 +60,86 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 const addComment = asyncHandler(async (req, res) => {
     const {videoId} = req.params
+    const {content} = req.body
+
+    if (!mongoose.Types.ObjectId.isValid(videoId)) 
+        {
+            throw new ApiError(400, "Invalid ID format");
+        }
+
+    if(!content){
+        throw new ApiError(400, "content is missing");
+    }
     
+    const comment = await Comment.create({
+          content,
+          videoId,
+          owner:req.user._id
+    })
+
+    if(!comment){
+        throw new ApiError(500,"comment not created")
+    }
+    
+    return res.status(200).json(new ApiResponse(200,comment,"comment created successfully"))
+
 })
 
 const updateComment = asyncHandler(async (req, res) => {
-    // TODO: update a comment
+    const {videoId} = req.params
+    const {content} = req.body
+    
+    if (!mongoose.Types.ObjectId.isValid(videoId)) 
+        {
+            throw new ApiError(400, "Invalid ID format");
+        }
+
+    if(!content){
+        throw new ApiError(400, "content is missing");
+    }
+
+    const updatedComment = await Comment.findOneAndUpdate(
+     {video:videoId,owner:req.user._id},
+     { $set: { content: "content" } },
+     {new:true}
+    )
+
+    if(!updatedComment){
+        throw new ApiError(500,"comment not updated")
+    }
+
+    return res.status(200).json(new ApiResponse(200,updatedComment,"comment updated successfully"))
+
+
 })
 
 const deleteComment = asyncHandler(async (req, res) => {
-    // TODO: delete a comment
+       
+    const {videoId} = req.params
+    
+    
+    if (!mongoose.Types.ObjectId.isValid(videoId)) 
+        {
+            throw new ApiError(400, "Invalid ID format");
+        }
+
+   
+    const deletedComment = await Comment.findOneAndDelete({video:videoId,owner:req.user._id})
+
+    if(!deletedComment){
+        throw new ApiError(500,"comment not deleted")
+    }
+
+    return res.status(200).json(new ApiResponse(200,deletedComment,"comment updated successfully"))
+
+
 })
+
+
 
 export {
     getVideoComments, 
     addComment, 
     updateComment,
-     deleteComment
+    deleteComment
     }
