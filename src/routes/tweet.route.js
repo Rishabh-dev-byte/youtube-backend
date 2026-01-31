@@ -5,7 +5,7 @@ import {
     getOwnerTweets,
     updateTweet,
     getAllTweets
-} from "../controllers/tweet.controller.js"
+} from "../controller/tweet.controller.js"
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 
 const router = Router();
